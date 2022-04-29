@@ -6,8 +6,12 @@ import (
 	"github.com/gocolly/colly"
 )
 
-// main() contains code adapted from example found in Colly's docs:
-// http://go-colly.org/docs/examples/basic/
+type Image struct {
+	URL   string
+	Title string
+	alt   string
+}
+
 func main() {
 	// Instantiate default collector
 	c := colly.NewCollector()
