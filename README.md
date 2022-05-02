@@ -2,7 +2,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/YOUR_GITHUB_USERNAME/makescraper)](https://goreportcard.com/report/github.com/YOUR_GITHUB_USERNAME/makescraper)
 
-_Create your very own web scraper and crawler using Go and [Colly](https://go-colly.org)!_
+ - This scraper grabs images, captions and text from SquareSpace Websites
 ## Operate Scraper:
 
 To Add Deps: 
@@ -10,12 +10,12 @@ To Add Deps:
 go get -u github.com/gocolly/colly
 ```
 
-To build Go Application type:
+To build Go Application:
 ```
 go build
 ```
 
-To run Go Application type:
+To run Go Application:
 ```
 go run
 ```
@@ -36,6 +36,8 @@ go run
 ```
 
 ## Getting Started
+
+_Create your very own web scraper and crawler using Go and [Colly](https://go-colly.org)!_
 
 1. Visit [github.com/new](https://github.com/new) and create a new repository named `makescraper`.
 2. Run each command line-by-line in your terminal to set up the project:

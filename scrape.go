@@ -29,6 +29,7 @@ func main() {
 		e.Request.Visit(link)
 	})
 
+	// Output to terminal
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
 	})
@@ -45,6 +46,5 @@ func main() {
 		fmt.Println("Finished", r.Request.URL)
 	})
 
-	// Start scraping on https://hackerspaces.org
-	c.Visit("https://hackerspaces.org/")
+	c.Visit("https://www.thesislabs.com")
 }
