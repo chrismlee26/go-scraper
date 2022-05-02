@@ -8,6 +8,18 @@ import (
 )
 
 // Struct for data to return
+type Data struct {
+	Text  []Text
+	Image []Image
+}
+
+// Text Struct
+type Text struct {
+	MainText string
+	SubText  string
+}
+
+// Image Struct
 type Image struct {
 	URL   string
 	Title string
@@ -23,6 +35,7 @@ func main() {
 		Delay:      2 * time.Second,
 	})
 
+	// Limit Domain (Prevent travel to external sites)
 	c.AllowedDomains = []string{"thesislabs.com"}
 
 	//  Find and visit all links
