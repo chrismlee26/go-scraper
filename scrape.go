@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gocolly/colly"
 )
 
+// Struct for data to return
 type Image struct {
 	URL   string
 	Title string
@@ -16,18 +18,26 @@ func main() {
 	// Instantiate default collector
 	c := colly.NewCollector()
 
+	c.Limit(&colly.LimitRule{
+		DomainGlob: "*",
+		Delay:      2 * time.Second,
+	})
+
+	c.AllowedDomains = []string{"thesislabs.com"}
+
 	//  Find and visit all links
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		// Find link using an attribute selector
-		// Matches any element that includes href=""
 		link := e.Attr("href")
-
-		// Print link
 		fmt.Printf("Link found: %q -> %s\n", e.Text, link)
-
-		// Visit link
 		e.Request.Visit(link)
 	})
+
+	// Visit site and print image links
+	// c.OnHTML("img", func(e *colly.HTMLElement) {
+	// 	link := e.Attr("src")
+	// 	fmt.Printf("%q\n", e.Attr("src"))
+	// 	e.Request.save(link)
+	// })
 
 	// Output to terminal
 	c.OnRequest(func(r *colly.Request) {
@@ -46,5 +56,5 @@ func main() {
 		fmt.Println("Finished", r.Request.URL)
 	})
 
-	c.Visit("https://www.thesislabs.com")
+	c.Visit("https://thesislabs.com")
 }
