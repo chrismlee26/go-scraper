@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/gocolly/colly"
@@ -26,17 +28,47 @@ type Image struct {
 	alt   string
 }
 
+var (
+	folderName   string
+	fileName     string
+	foundFileUrl string
+)
+
+// func createFolders() {
+// 	// Create folders
+// 	file, err := os.Create()
+// 	checkError(err)
+// 	return file
+// }
+
+func createFileName() {
+	// change foundFileUrl into image paths found by scraper
+	fileURL, err := url.Parse(foundFileUrl)
+	checkError(err)
+
+	path := fileURL.Path
+	splitPaths := strings.Split(path, "/")
+	fileName = splitPaths(len(splitPaths) - 1)
+}
+
+func checkError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func main() {
 	// Instantiate default collector
-	c := colly.NewCollector()
+	c := colly.NewCollector(
+		// Limit Domain (Prevent travel to external sites)
+		colly.AllowedDomains("thesislabs.com"),
+	)
 
+	// Limit Rules to prevent getting banned by the site
 	c.Limit(&colly.LimitRule{
-		DomainGlob: "*",
+		DomainGlob: "*thesislabs.com",
 		Delay:      2 * time.Second,
 	})
-
-	// Limit Domain (Prevent travel to external sites)
-	c.AllowedDomains = []string{"thesislabs.com"}
 
 	//  Find and visit all links
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
@@ -49,7 +81,6 @@ func main() {
 	// c.OnHTML("img", func(e *colly.HTMLElement) {
 	// 	link := e.Attr("src")
 	// 	fmt.Printf("%q\n", e.Attr("src"))
-	// 	e.Request.save(link)
 	// })
 
 	// Output to terminal
