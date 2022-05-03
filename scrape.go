@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"strings"
 	"time"
+	"encoding/json"
 
 	"github.com/gocolly/colly"
 )
@@ -16,9 +18,9 @@ type Data struct {
 }
 
 // Text Struct
-type Text struct {
-	MainText string
-	SubText  string
+type Url struct {
+	Text string
+	Link  string
 }
 
 // Image Struct
@@ -34,12 +36,7 @@ var (
 	foundFileUrl string
 )
 
-// func createFolders() {
-// 	// Create folders
-// 	file, err := os.Create()
-// 	checkError(err)
-// 	return file
-// }
+foundLinks := make([]Url, 100)
 
 func createFileName() {
 	// change foundFileUrl into image paths found by scraper
@@ -48,7 +45,14 @@ func createFileName() {
 
 	path := fileURL.Path
 	splitPaths := strings.Split(path, "/")
-	fileName = splitPaths(len(splitPaths) - 1)
+
+	// Filename for downloaded items
+	fileName = splitPaths[len(splitPaths)-1]
+
+	// Folder name for downloaded items
+	folderName = strings.Join(splitPaths[:len(splitPaths)-1], "/")
+	// os.Mkdir(folderName, 0777)
+	os.MkdirAll(folderName, os.ModePerm)
 }
 
 func checkError(err error) {
@@ -73,8 +77,16 @@ func main() {
 	//  Find and visit all links
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
-		fmt.Printf("Link found: %q -> %s\n", e.Text, link)
-		e.Request.Visit(link)
+		// fmt.Printf("Link found: %q -> %s\n", e.Text, link)
+		foundLink := Url{
+			Text: e.Text,
+			Link: link,
+		}
+		append(foundLinks, foundLink)
+			
+
+		// Visit link found on page
+		// e.Request.Visit(link)
 	})
 
 	// Visit site and print image links
@@ -100,5 +112,22 @@ func main() {
 		fmt.Println("Finished", r.Request.URL)
 	})
 
+	// Start scraping
 	c.Visit("https://thesislabs.com")
+
+	// All logic goes here after visit. 
+	// Create file name and folder name
+	createFileName()
+	
+	// Find all image links
+	c.OnHTML("img", func(e *colly.HTMLElement) {
+		link := e.Attr("src")
+	// store image links in array
+		foundImage := Image{
+			URL: link,
+		}
+		append(foundImages, foundImage)
+	})
+	// Export links to json file
+	exportToJSON()
 }
