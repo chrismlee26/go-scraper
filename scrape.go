@@ -3,63 +3,30 @@ package main
 import (
 	"fmt"
 	"net/url"
-	"os"
-	"strings"
 	"time"
-	"encoding/json"
 
 	"github.com/gocolly/colly"
 )
 
-// Struct for data to return
-type Data struct {
-	Text  []Text
-	Image []Image
-}
-
-// Text Struct
+// Struct for all URL's
 type Url struct {
 	Text string
-	Link  string
+	Link string
 }
 
-// Image Struct
-type Image struct {
-	URL   string
-	Title string
-	alt   string
-}
-
+// Instantiate variable for single URL
 var (
-	folderName   string
-	fileName     string
 	foundFileUrl string
 )
-
-foundLinks := make([]Url, 100)
-
-func createFileName() {
-	// change foundFileUrl into image paths found by scraper
-	fileURL, err := url.Parse(foundFileUrl)
-	checkError(err)
-
-	path := fileURL.Path
-	splitPaths := strings.Split(path, "/")
-
-	// Filename for downloaded items
-	fileName = splitPaths[len(splitPaths)-1]
-
-	// Folder name for downloaded items
-	folderName = strings.Join(splitPaths[:len(splitPaths)-1], "/")
-	// os.Mkdir(folderName, 0777)
-	os.MkdirAll(folderName, os.ModePerm)
-}
 
 func checkError(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
+
+// Slice to store URL's with length of 100
+foundLinks := make([]Url, 100)
 
 func main() {
 	// Instantiate default collector
@@ -83,17 +50,7 @@ func main() {
 			Link: link,
 		}
 		append(foundLinks, foundLink)
-			
-
-		// Visit link found on page
-		// e.Request.Visit(link)
 	})
-
-	// Visit site and print image links
-	// c.OnHTML("img", func(e *colly.HTMLElement) {
-	// 	link := e.Attr("src")
-	// 	fmt.Printf("%q\n", e.Attr("src"))
-	// })
 
 	// Output to terminal
 	c.OnRequest(func(r *colly.Request) {
@@ -115,19 +72,19 @@ func main() {
 	// Start scraping
 	c.Visit("https://thesislabs.com")
 
-	// All logic goes here after visit. 
+	// All logic goes here after visit.
 	// Create file name and folder name
-	createFileName()
-	
+	// createFileName()
+
 	// Find all image links
 	c.OnHTML("img", func(e *colly.HTMLElement) {
 		link := e.Attr("src")
-	// store image links in array
+		// store image links in array
 		foundImage := Image{
 			URL: link,
 		}
 		append(foundImages, foundImage)
 	})
 	// Export links to json file
-	exportToJSON()
+	// exportToJSON()
 }
