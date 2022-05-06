@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/url"
 	"time"
 
 	"github.com/gocolly/colly"
@@ -16,7 +15,7 @@ type Url struct {
 
 // Instantiate variable for single URL
 var (
-	foundFileUrl string
+	FileURL string
 )
 
 func checkError(err error) {
@@ -25,10 +24,11 @@ func checkError(err error) {
 	}
 }
 
-// Slice to store URL's with length of 100
-foundLinks := make([]Url, 100)
-
 func main() {
+	// Slice to store URLs with length of 100
+	var foundLinks = make([]Url, 100)
+	fmt.Printf("foundLinks: \tLen: %v \tCap: %v\n", len(foundLinks), cap(foundLinks))
+
 	// Instantiate default collector
 	c := colly.NewCollector(
 		// Limit Domain (Prevent travel to external sites)
@@ -41,15 +41,18 @@ func main() {
 		Delay:      2 * time.Second,
 	})
 
-	//  Find and visit all links
+	// Find and visit all links
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
-		// fmt.Printf("Link found: %q -> %s\n", e.Text, link)
-		foundLink := Url{
-			Text: e.Text,
-			Link: link,
+		fmt.Printf("Link found: %q -> %s\n", e.Text, link)
+
+		if len(foundLinks) < 100 {
+			foundLink := Url{
+				Text: e.Text,
+				Link: link,
+			}
+			// append(foundLinks, foundLink)
 		}
-		append(foundLinks, foundLink)
 	})
 
 	// Output to terminal
@@ -77,14 +80,15 @@ func main() {
 	// createFileName()
 
 	// Find all image links
-	c.OnHTML("img", func(e *colly.HTMLElement) {
-		link := e.Attr("src")
-		// store image links in array
-		foundImage := Image{
-			URL: link,
-		}
-		append(foundImages, foundImage)
-	})
+	// c.OnHTML("img", func(e *colly.HTMLElement) {
+	// 	link := e.Attr("src")
+	// 	// store image links in array
+	// 	foundImage := Image{
+	// 		URL: link,
+	// 	}
+	// 	append(foundImages, foundImage)
+	// })
+
 	// Export links to json file
 	// exportToJSON()
 }
