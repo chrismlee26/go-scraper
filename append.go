@@ -10,7 +10,7 @@ import (
 func AppendFile() {
 	file, err := os.OpenFile("test.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Fatalf("failed opening fole: %s", err)
+		log.Fatalf("failed opening file: %s", err)
 	}
 	defer file.Close()
 

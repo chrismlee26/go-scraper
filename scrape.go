@@ -13,25 +13,29 @@ type Url struct {
 	Link string
 }
 
-// Instantiate variable for single URL
-var (
-	FileURL string
-)
+// Helper Functions
 
+// Check Error
 func checkError(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
+// JSON Conversion
+
+// Append to File
+
 func main() {
-	// Slice to store URLs with length of 100
-	var foundLinks = make([]Url, 100)
-	fmt.Printf("foundLinks: \tLen: %v \tCap: %v\n", len(foundLinks), cap(foundLinks))
+	// Create Slice to store URLs, length 100
+	var appendLinks = make([]Url, 100)
+
+	// Create a new collector
+	// foundLink := []Url{}
+	fmt.Printf("foundLinks: \tLen: %v \tCap: %v\n", len(appendLinks), cap(appendLinks))
 
 	// Instantiate default collector
 	c := colly.NewCollector(
-		// Limit Domain (Prevent travel to external sites)
 		colly.AllowedDomains("thesislabs.com"),
 	)
 
@@ -46,13 +50,11 @@ func main() {
 		link := e.Attr("href")
 		fmt.Printf("Link found: %q -> %s\n", e.Text, link)
 
-		if len(foundLinks) < 100 {
-			foundLink := Url{
-				Text: e.Text,
-				Link: link,
-			}
-			// append(foundLinks, foundLink)
-		}
+		// appendFile(link)
+		// links = append(appendLinks, foundLink{
+		// 	Text: e.Text,
+		// 	Link: link,
+		// })
 	})
 
 	// Output to terminal
@@ -76,18 +78,8 @@ func main() {
 	c.Visit("https://thesislabs.com")
 
 	// All logic goes here after visit.
-	// Create file name and folder name
-	// createFileName()
-
 	// Find all image links
-	// c.OnHTML("img", func(e *colly.HTMLElement) {
-	// 	link := e.Attr("src")
-	// 	// store image links in array
-	// 	foundImage := Image{
-	// 		URL: link,
-	// 	}
-	// 	append(foundImages, foundImage)
-	// })
+	// appendLinks()
 
 	// Export links to json file
 	// exportToJSON()
