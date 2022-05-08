@@ -31,7 +31,8 @@ func checkError(err error) {
 func main() {
 	// Create Slice to store URLs, length 100
 	var appendLinks = make([]Url, 100)
-	var linkByTest = map[string]string{}
+	var linkByText = map[string]string{}
+	var images []string
 
 	// Create a new collector
 	// foundLink := []Url{}
@@ -48,12 +49,21 @@ func main() {
 		Delay:      2 * time.Second,
 	})
 
+	c.OnHTML("img[src]", func(e *colly.HTMLElement) {
+		src := e.Attr("src")
+		fmt.Printf("Image found: %q => %s", e.Text, src)
+
+		images = append(images, src)
+	})
+
 	// Find and visit all links
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
 		fmt.Printf("Link found: %q -> %s\n", e.Text, link)
 
-		linkByTest[e.Text] = link
+		linkByText[e.Text] = link
+		absoluteURL := e.Request.AbsoluteURL(link)
+		c.Visit(absoluteURL)
 		// appendFile(link)
 		// append(appendLinks, foundLink{
 		// 	Text: e.Text,
@@ -88,12 +98,17 @@ func main() {
 	// Export links to json file
 	// exportToJSON()
 
-	linkByTextJSON, err := json.MarshalIndent(linkByTest, "", "  ")
-	if err != nil {
-		panic(err)
-	}
+	linkByTextJSON, err := json.MarshalIndent(linkByText, "", "  ")
+	checkError(err)
 
 	fmt.Println(string(linkByTextJSON))
 
-	ioutil.WriteFile("linksByTest.json", linkByTextJSON, 0777)
+	ioutil.WriteFile("output.json", linkByTextJSON, 0777)
+
+	imagesBySrcJSON, err := json.MarshalIndent(images, "", "  ")
+	checkError(err)
+
+	fmt.Println(string(imagesBySrcJSON))
+
+	ioutil.WriteFile("imagesBySrc.json", linkByTextJSON, 0777)
 }
