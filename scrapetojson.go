@@ -10,7 +10,7 @@ type FruitList struct {
 	Fruits []string `json:"fruits"`
 }
 
-func scrapetojson() {
+func main() {
 	// fruitSlice := []string{"apple", "peach", "pear"}
 	fruitList := &FruitList{
 		Page:   1,

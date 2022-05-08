@@ -8,13 +8,13 @@ import (
 )
 
 func AppendFile() {
-	file, err := os.OpenFile("test.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile("test.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatalf("failed opening file: %s", err)
 	}
 	defer file.Close()
 
-	len, err := file.WriteString("Text to be appended to the file")
+	len, err := file.WriteString("Text to be appended to the file\n")
 	if err != nil {
 		log.Fatalf("Failed writing to file: %s", err)
 	}
@@ -23,7 +23,7 @@ func AppendFile() {
 }
 
 func ReadFile() {
-	data, err := ioutil.ReadFile("test.txt")
+	data, err := ioutil.ReadFile("test.json")
 	if err != nil {
 		log.Panicf("failed opening file: %s", err)
 	}

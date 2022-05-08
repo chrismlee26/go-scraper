@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"time"
 
 	"github.com/gocolly/colly"
@@ -29,6 +31,7 @@ func checkError(err error) {
 func main() {
 	// Create Slice to store URLs, length 100
 	var appendLinks = make([]Url, 100)
+	var linkByTest = map[string]string{}
 
 	// Create a new collector
 	// foundLink := []Url{}
@@ -50,8 +53,9 @@ func main() {
 		link := e.Attr("href")
 		fmt.Printf("Link found: %q -> %s\n", e.Text, link)
 
+		linkByTest[e.Text] = link
 		// appendFile(link)
-		// links = append(appendLinks, foundLink{
+		// append(appendLinks, foundLink{
 		// 	Text: e.Text,
 		// 	Link: link,
 		// })
@@ -83,4 +87,13 @@ func main() {
 
 	// Export links to json file
 	// exportToJSON()
+
+	linkByTextJSON, err := json.MarshalIndent(linkByTest, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(string(linkByTextJSON))
+
+	ioutil.WriteFile("linksByTest.json", linkByTextJSON, 0777)
 }
