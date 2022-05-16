@@ -18,7 +18,16 @@ type Url struct {
 }
 
 //  ---------------------
-//  Check Error
+// Struct for all Text
+//  ---------------------
+type Text struct {
+	Text    string
+	Alt     string
+	Caption string
+}
+
+//  ---------------------
+//  Check Error Function
 //  ---------------------
 func checkError(err error) {
 	if err != nil {
@@ -30,7 +39,7 @@ func checkError(err error) {
 //  Main
 //  ---------------------
 func main() {
-	// Create Slice to store URLs, length 100
+	// Slice to store URLs, length 100, capacity 100
 	var appendLinks = make([]Url, 100)
 	var linkByText = map[string]string{}
 	var images []string
@@ -41,6 +50,7 @@ func main() {
 
 	// Instantiate default collector
 	c := colly.NewCollector(
+		// Use stdin to get URL's. SS CDN will be hardcoded.
 		colly.AllowedDomains("thesislabs.com", "images.squarespace-cdn.com", "https://thesislabs.com/web", "https://thesislabs.com/interiors", "https://thesislabs.com/fashion"),
 	)
 
@@ -99,7 +109,8 @@ func main() {
 			images = append(images, r.Request.URL.String())
 
 			// TODO: Download images in link directory
-			// Why won't it download????
+			// Downloads need a package and logic to differentiate image types.
+
 			// ioutil.WriteFile(r.Request.URL.String(), r.Body, 0777)
 			// os.Create(r.Request.URL.String() + ".jpg")
 			// fmt.Println("Saving", r.Request.URL)
@@ -119,9 +130,6 @@ func main() {
 	//  ---------------------
 	// Start scraping
 	//  ---------------------
-	// May need a piece of logic to extend to other links instead of hardcoding these :S
-
-	// TODO: auto select links
 	c.Visit("https://thesislabs.com")
 
 	//  ---------------------
@@ -130,4 +138,15 @@ func main() {
 	linkByTextJSON, err := json.MarshalIndent(linkByText, "", "  ")
 	checkError(err)
 	ioutil.WriteFile("output.json", linkByTextJSON, 0777)
+
+	//  ---------------------
+	// TODOs for v1
+	//  ---------------------
+	// Clean up JSON output
+	// Use URL's to mkdir folders
+	// Download Images into corresponding folders
+	// Download Text into corresponding folders
+	// Stylize command line input
+	// Redo readme
+
 }
